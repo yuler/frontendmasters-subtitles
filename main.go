@@ -44,8 +44,14 @@ func main() {
 			fmt.Println(transcript)
 
 			start := transcript[1:9]
-			endTime, _ := time.Parse("15:04:05", start)
-			end := endTime.Add(20 * time.Second).Format("15:04:05")
+			end := ""
+			if i+1 != len(transcripts) {
+				end = transcripts[i+1][1:9]
+			} else {
+				endTime, _ := time.Parse("15:04:05", start)
+				end = endTime.Add(100 * time.Second).Format("15:04:05")
+			}
+
 			f.WriteString(strconv.Itoa(i) + "\n")
 			f.WriteString(start + ",000  -->  " + end + ",000\n")
 			f.WriteString(transcript[10:] + "\n")
