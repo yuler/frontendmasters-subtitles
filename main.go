@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strconv"
+	"time"
 
 	"github.com/gocolly/colly"
 )
@@ -31,15 +33,22 @@ func main() {
 		fmt.Println("====")
 		fmt.Printf("Title: %s \n", title)
 		fmt.Println("Transcripts:")
-		f, err := os.Create("output/" + title + ".txt")
+		f, err := os.Create("output/" + title + ".srt")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer f.Close()
 
 		for i := 0; i < len(transcripts); i++ {
-			fmt.Println(transcripts[i])
-			f.WriteString(transcripts[i] + "\n")
+			transcript := transcripts[i]
+			fmt.Println(transcript)
+
+			start := transcript[1:9]
+			endTime, _ := time.Parse("15:04:05", start)
+			end := endTime.Add(20 * time.Second).Format("15:04:05")
+			f.WriteString(strconv.Itoa(i) + "\n")
+			f.WriteString(start + ",000  -->  " + end + ",000\n")
+			f.WriteString(transcript[10:] + "\n")
 		}
 		fmt.Println("====")
 	})
