@@ -1,2 +1,4 @@
+.DS_Store
+
 !.gitkeep
-output/*.txt
+output/*.srt
