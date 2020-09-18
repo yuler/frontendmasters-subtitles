@@ -19,21 +19,33 @@ func main() {
 		colly.AllowedDomains("frontendmasters.com"),
 	)
 
-	// Get Course links
-	c.OnHTML(".CourseToc a[href]", func(e *colly.HTMLElement) {
-		link := e.Attr("href")
-		e.Request.Visit(link)
+	group := ""
+	c.OnHTML(".CourseToc", func(t *colly.HTMLElement) {
+		// Get lesson group
+		t.ForEach(".LessonList", func(i int, g *colly.HTMLElement) {
+			group = g.DOM.Prev().Text()
+			// Get Course links
+			g.ForEach(".CourseToc a[href]", func(i int, e *colly.HTMLElement) {
+				link := e.Attr("href")
+				e.Request.Visit(link)
+			})
+		})
 	})
 
 	// Get Lesson Transcript
 	c.OnHTML(".LessonTranscript", func(e *colly.HTMLElement) {
 		title := e.ChildText(".LessonTranscriptTitle")
 		title = regexp.MustCompile("\"(.*?)\"").FindStringSubmatch(title)[1]
-		transcripts := e.ChildTexts(".s-wrap p:not(:first-child)")
+		transcripts := []string{}
+		e.ForEach(".s-wrap p:not(:first-child)", func(i int, e *colly.HTMLElement) {
+			transcripts = append(transcripts, e.Text)
+		})
 		fmt.Println("====")
+		fmt.Printf("Group: %s \n", group)
 		fmt.Printf("Title: %s \n", title)
 		fmt.Println("Transcripts:")
-		f, err := os.Create("output/" + title + ".srt")
+		os.MkdirAll("output/"+group+"/", 0755)
+		f, err := os.Create("output/" + group + "/" + title + ".srt")
 		if err != nil {
 			log.Fatal(err)
 		}
