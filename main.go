@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -10,7 +11,9 @@ import (
 	"strconv"
 	"time"
 
+	"cloud.google.com/go/translate"
 	"github.com/gocolly/colly"
+	"golang.org/x/text/language"
 )
 
 func main() {
@@ -67,6 +70,12 @@ func main() {
 			f.WriteString(strconv.Itoa(i) + "\n")
 			f.WriteString(start + ",000  -->  " + end + ",000\n")
 			f.WriteString(transcript[10:] + "\n")
+			translated, err := translateText(transcript[10:])
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println(translated)
+			f.WriteString(translated + "\n")
 		}
 		fmt.Println("====")
 	})
@@ -80,4 +89,29 @@ func main() {
 	})
 
 	c.Visit("https://frontendmasters.com/courses/deep-javascript-v3/")
+}
+
+func translateText(text string) (string, error) {
+	// text := "The Go Gopher is cute"
+	ctx := context.Background()
+
+	lang, err := language.Parse("zh")
+	if err != nil {
+		return "", fmt.Errorf("language.Parse: %v", err)
+	}
+
+	client, err := translate.NewClient(ctx)
+	if err != nil {
+		return "", err
+	}
+	defer client.Close()
+
+	resp, err := client.Translate(ctx, []string{text}, lang, nil)
+	if err != nil {
+		return "", fmt.Errorf("Translate: %v", err)
+	}
+	if len(resp) == 0 {
+		return "", fmt.Errorf("Translate returned empty response to text: %s", text)
+	}
+	return resp[0].Text, nil
 }

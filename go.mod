@@ -3,6 +3,7 @@ module github/yuler/frontendmasters-subtitles
 go 1.15
 
 require (
+	cloud.google.com/go v0.66.0
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
 	github.com/antchfx/htmlquery v1.2.3 // indirect
 	github.com/antchfx/xmlquery v1.3.1 // indirect
@@ -12,5 +13,6 @@ require (
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/temoto/robotstxt v1.1.1 // indirect
 	golang.org/x/net v0.0.0-20200904194848-62affa334b73 // indirect
+	golang.org/x/text v0.3.3
 	google.golang.org/appengine v1.6.6 // indirect
 )
