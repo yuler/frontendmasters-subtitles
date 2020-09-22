@@ -70,10 +70,14 @@ func main() {
 			f.WriteString(strconv.Itoa(i) + "\n")
 			f.WriteString(start + ",000  -->  " + end + ",000\n")
 			f.WriteString(transcript[10:] + "\n")
-			translated, err := translateText(transcript[10:])
-			if err != nil {
-				log.Fatal(err)
+			translated := "xxxxxxxxxxxxxxx"
+			for i := 0; i < 5; i++ {
+				translated, err = translateText(transcript[10:])
+				if err == nil {
+					break
+				}
 			}
+
 			fmt.Println(translated)
 			f.WriteString(translated + "\n")
 		}
@@ -88,7 +92,7 @@ func main() {
 		log.Println("Something went wrong:", err)
 	})
 
-	c.Visit("https://frontendmasters.com/courses/deep-javascript-v3/")
+	c.Visit("https://frontendmasters.com/courses/functional-javascript-v3/")
 }
 
 func translateText(text string) (string, error) {
